@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -29,7 +30,7 @@ public class StringCalculator {
             delimiters.add(customDelimiter);
         }
 
-        List<Integer> ints = extractNums(delimiters, List.of(numbers))
+        List<Integer> ints = tokenize(delimiters, List.of(numbers))
                 .stream()
                 .filter(Predicate.not(String::isEmpty))
                 .map(Integer::parseInt)
@@ -57,37 +58,32 @@ public class StringCalculator {
     }
 
     private String getCustomDelimiter(String numbers) {
-        if(numbers.matches(MULTI_CHAR_DELIMITER)) {
-            Pattern pattern = Pattern.compile(MULTI_CHAR_DELIMITER);
-            Matcher matcher = pattern.matcher(numbers);
-            matcher.find();
+        Pattern pattern = Pattern.compile(MULTI_CHAR_DELIMITER);
+        Matcher matcher = pattern.matcher(numbers);
+        if(matcher.find()) { // Multi-char delimiter
             return matcher.group(1);
         } else if(numbers.startsWith("//")) { // Single char delimiter
             return Character.toString(numbers.charAt(2));
         }
-
-        return "";
+        return ""; // No custom delimiter
     }
 
-    List<String> extractNums(List<String> delimiters, List<String> string) {
-        if(delimiters.isEmpty()) {
-            return string;
+    /**
+     * Split string by delimiters
+     * @param delimiters
+     * @param string
+     * @return List of split tokens
+     */
+    List<String> tokenize(List<String> delimiters, List<String> string) {
+        for (String d : delimiters) {
+            List<String> newResults = new ArrayList<>();
+            for(String s : string) {
+                String[] split = s.split(Pattern.quote(d));
+                Collections.addAll(newResults, split);
+            }
+            string = newResults;
         }
-
-        List<String> newResults = new ArrayList<>();
-
-        for(String s : string) {
-            String[] split = s.split(Pattern.quote(delimiters.get(0)));
-            newResults.addAll(Arrays.asList(split));
-        }
-
-        delimiters = delimiters.subList(1, delimiters.size());
-
-        if(!delimiters.isEmpty()) {
-            newResults = extractNums(delimiters, newResults);
-        }
-
-        return newResults;
+        return string;
     }
 
     public int getCallCount() {
