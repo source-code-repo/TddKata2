@@ -1,5 +1,6 @@
 package com;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -34,6 +37,11 @@ public class StringCalculatorTestKata2 {
         MainClass.setScanner(s);
         // This stops tests from hanging  because MainClass waits for input
         when(s.nextLine()).thenReturn("1");
+    }
+
+    @After
+    public void resetSysOut() {
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
     }
 
     @Test
