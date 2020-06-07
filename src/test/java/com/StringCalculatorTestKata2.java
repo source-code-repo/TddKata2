@@ -31,6 +31,7 @@ public class StringCalculatorTestKata2 {
 
     @InjectMocks private MainClass mc = new MainClass();
     @Mock private Scanner s;
+    @Mock private PrintStream ps;
 
     @Before
     public void setup() {
@@ -59,7 +60,6 @@ public class StringCalculatorTestKata2 {
 
     @Test
     public void calcResultOutputToScreen() {
-        PrintStream ps = mock(PrintStream.class);
         System.setOut(ps);
         sc.add("1,2,3");
         verify(ps).println(6);
@@ -67,7 +67,6 @@ public class StringCalculatorTestKata2 {
 
     @Test
     public void calcCalledFromCliResultOnScreen() {
-        PrintStream ps = mock(PrintStream.class);
         System.setOut(ps);
         mc.main(new String[] {"1,2,3"});
         verify(ps).println("The result is 6");
@@ -75,7 +74,6 @@ public class StringCalculatorTestKata2 {
 
     @Test
     public void calcCalledFromCliPrintedResultPromptsForNextInput() {
-        PrintStream ps = mock(PrintStream.class);
         System.setOut(ps);
         mc.main(new String[] {"1,2,3"});
         verify(ps).println("another input please: ");
@@ -83,7 +81,6 @@ public class StringCalculatorTestKata2 {
 
     @Test
     public void calcCalledFromCliAcceptsInputShowsResult() {
-        PrintStream ps = mock(PrintStream.class);
         System.setOut(ps);
         when(s.nextLine()).thenReturn("5,6,7");
         mc.main(new String[] {"1,2,3"});
